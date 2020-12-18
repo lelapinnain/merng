@@ -1,22 +1,29 @@
-import React, { useState } from "react";
-import { Form, Button, Label, Input } from "semantic-ui-react";
+import React, { useState, useContext } from "react";
+import { Form, Button } from "semantic-ui-react";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 
-function Register() {
+import { useForm } from "../util/hooks";
+import { AuthContext } from "../context/auth";
+
+function Register(props) {
   const [errors, setErrors] = useState({});
-  const [values, setValues] = useState({
+  const context = useContext(AuthContext);
+  const initialState = {
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-  });
-  const onChange = (event) => {
-    setValues({ ...values, [event.target.name]: event.target.value });
   };
+
+  const { onChange, onSubmit, values } = useForm(registerUser, {
+    initialState,
+  });
+
   const [addUser, { loading }] = useMutation(REGISTER_USER, {
     update(proxy, result) {
-      console.log(result);
+      context.login(result.data.register);
+      props.history.push("/");
     },
     onError(err) {
       setErrors(err.graphQLErrors[0].extensions.exception.errors);
@@ -28,10 +35,10 @@ function Register() {
       email: values.email,
     },
   });
-  const onSubmit = (event) => {
-    event.preventDefault();
+
+  function registerUser() {
     addUser();
-  };
+  }
 
   return (
     <div>
@@ -70,6 +77,7 @@ function Register() {
           placeholder="Confirm Password..."
           name="confirmPassword"
           value={values.confirmPassword}
+          error={errors.confirmPassword ? true : false}
           onChange={onChange}
         ></Form.Input>
         <Button>Register</Button>
