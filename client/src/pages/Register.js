@@ -2,13 +2,13 @@ import React, { useState, useContext } from "react";
 import { Form, Button } from "semantic-ui-react";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
-
 import { useForm } from "../util/hooks";
 import { AuthContext } from "../context/auth";
 
 function Register(props) {
   const [errors, setErrors] = useState({});
   const context = useContext(AuthContext);
+  context.path1 = "register";
   const initialState = {
     username: "",
     email: "",

@@ -38,7 +38,7 @@ function Login(props) {
   return (
     <div>
       <Form onSubmit={onSubmit} noValidate className="form-container">
-        <h1>Register</h1>
+        <h1>Login</h1>
         <Form.Input
           label="Username"
           placeholder="Username..."

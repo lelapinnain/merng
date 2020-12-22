@@ -5,6 +5,7 @@ const initialState = {
   user: null,
 };
 
+/////// to refresh with keeping user info stored in local storage
 if (localStorage.getItem("jwtToken")) {
   const decodedToken = jwtDecode(localStorage.getItem("jwtToken"));
   console.log(decodedToken);
@@ -14,6 +15,7 @@ if (localStorage.getItem("jwtToken")) {
     initialState.user = decodedToken;
   }
 }
+/////////
 
 const AuthContext = createContext({
   user: null,

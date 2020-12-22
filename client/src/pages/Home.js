@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import { Grid } from "semantic-ui-react";
-import PostCard from "../components/PostCard";
-import wait from "waait";
 
+import { Grid, Transition } from "semantic-ui-react";
+import PostCard from "../components/PostCard";
+import PostForm from "../components/PostForm";
+import { AuthContext } from "../context/auth";
+
+import { Fetch_Posts_Query } from "../util/graphql";
 function Home() {
+  const { user } = useContext(AuthContext);
   const {
     loading,
     data,
-    // data: { getPosts: posts },
-  } = useQuery(Fetch_Posts_Query1, {
+  } = useQuery(Fetch_Posts_Query, {
     fetchPolicy: "cache-and-network",
   });
   //console.log(posts);
@@ -22,15 +24,22 @@ function Home() {
         <h1>Recent Posts</h1>
       </Grid.Row>
       <Grid.Row>
+        {user && (
+          <Grid.Column>
+            <PostForm />
+          </Grid.Column>
+        )}
         {loading ? (
           <h1>loading posts</h1>
         ) : (
-          data.getPosts &&
-          data.getPosts.map((post) => (
-            <Grid.Column key={post.id} className="card-margin">
-              <PostCard post={post} />
-            </Grid.Column>
-          ))
+          <Transition.Group>
+            {data.getPosts &&
+              data.getPosts.map((post) => (
+                <Grid.Column key={post.id} className="card-margin">
+                  <PostCard post={post} />
+                </Grid.Column>
+              ))}
+          </Transition.Group>
         )}
       </Grid.Row>
     </Grid>
@@ -39,22 +48,3 @@ function Home() {
 }
 
 export default Home;
-const Fetch_Posts_Query1 = gql`
-  query {
-    getPosts {
-      id
-      body
-      createdAt
-      username
-      likeCount
-      likes {
-        username
-      }
-      commentCount
-      comments {
-        id
-        body
-      }
-    }
-  }
-`;
